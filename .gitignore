@@ -36,7 +36,6 @@ ENV/
 uploads/
 .cache/
 huggingface/
-models/
 artifacts/
 data/
 
