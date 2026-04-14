@@ -133,7 +133,7 @@ pylatexenc==2.10
 PyMuPDF==1.27.1
 pyparsing==3.3.2
 pypdfium2==5.4.0
-pyreadline3==3.5.4
+pyreadline3==3.5.4; sys_platform == "win32"
 Pyrogram==2.0.106
 PySocks==1.7.1
 pytest==9.0.2
@@ -145,9 +145,9 @@ python-jose==3.3.0
 python-multipart==0.0.22
 python-pptx==1.0.2
 pytz==2025.2
-pywifi==1.1.12
-pywin32==306
-pywin32-ctypes==0.2.3
+pywifi==1.1.12; sys_platform == "win32"
+pywin32==306; sys_platform == "win32"
+pywin32-ctypes==0.2.3; sys_platform == "win32"
 PyYAML==6.0.3
 rapidocr==3.6.0
 referencing==0.37.0
