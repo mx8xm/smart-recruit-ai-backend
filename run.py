@@ -2,12 +2,23 @@ import os
 import sys
 
 import uvicorn
+from pydantic import ValidationError
 
 from app.core.config import get_settings
 from app.core.logging_setup import configure_logging
 
 
-settings = get_settings()
+def _load_settings_or_exit():
+    try:
+        return get_settings()
+    except ValidationError as exc:
+        print("Configuration is missing.")
+        print("Create a .env.local file next to the executable, or copy .env.local.example and edit it.")
+        print("Required values include DATABASE_URL and SECRET_KEY.")
+        raise SystemExit(1) from exc
+
+
+settings = _load_settings_or_exit()
 
 
 if __name__ == "__main__":

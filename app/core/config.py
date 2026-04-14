@@ -2,12 +2,19 @@ from functools import lru_cache
 import json
 import os
 from pathlib import Path
+import sys
 
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+def _resolve_project_root() -> Path:
+    if getattr(sys, "frozen", False):
+        return Path(sys.executable).resolve().parent
+    return Path(__file__).resolve().parents[2]
+
+
+PROJECT_ROOT = _resolve_project_root()
 
 
 def _resolve_env_file() -> str | None:
@@ -16,11 +23,26 @@ def _resolve_env_file() -> str | None:
         candidate = Path(env_file)
         if not candidate.is_absolute():
             candidate = PROJECT_ROOT / candidate
-        return str(candidate)
+        if candidate.exists():
+            return str(candidate)
 
-    default_env_file = PROJECT_ROOT / ".env.local"
-    if default_env_file.exists():
-        return str(default_env_file)
+    candidates = [
+        PROJECT_ROOT / ".env.local",
+        PROJECT_ROOT / ".env",
+    ]
+
+    # Packaged builds ship examples; allow them as a local-first fallback.
+    if getattr(sys, "frozen", False) or os.getenv("SMART_RECRUIT_PACKAGED") == "1":
+        candidates.extend(
+            [
+                PROJECT_ROOT / ".env.local.example",
+                PROJECT_ROOT / ".env.example",
+            ]
+        )
+
+    for candidate in candidates:
+        if candidate.exists():
+            return str(candidate)
 
     return None
 
