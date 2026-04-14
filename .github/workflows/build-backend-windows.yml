@@ -63,7 +63,7 @@ jobs:
           python -m PyInstaller --version
 
       - name: Optional model predownload
-        if: ${{ inputs.predownload_models }}
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.predownload_models }}
         shell: powershell
         run: |
           python download_models.py
@@ -80,7 +80,7 @@ jobs:
           }
 
       - name: Build onefile
-        if: ${{ inputs.build_onefile }}
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.build_onefile }}
         shell: powershell
         run: |
           $env:PYI_BUILD_MODE = "onefile"
@@ -103,19 +103,22 @@ jobs:
           name: smart-recruit-backend-onedir
           path: output/artifacts/smart-recruit-backend-onedir.zip
           retention-days: 5
+          if-no-files-found: error
 
       - name: Upload onefile zip
-        if: ${{ inputs.build_onefile }}
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.build_onefile }}
         uses: actions/upload-artifact@v4
         with:
           name: smart-recruit-backend-onefile-zip
           path: output/artifacts/smart-recruit-backend-onefile.zip
           retention-days: 5
+          if-no-files-found: error
 
       - name: Upload onefile exe
-        if: ${{ inputs.build_onefile }}
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.build_onefile }}
         uses: actions/upload-artifact@v4
         with:
           name: smart-recruit-backend-onefile-exe
           path: output/artifacts/smart-recruit-backend-onefile.exe
           retention-days: 5
+          if-no-files-found: error
