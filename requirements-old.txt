@@ -1,0 +1,46 @@
+# FastAPI Framework
+fastapi
+uvicorn[standard]==0.27.1
+
+# Database
+sqlalchemy
+alembic
+asyncpg
+psycopg2-binary
+
+# Authentication & Security
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-multipart
+
+# Pydantic Settings
+pydantic
+pydantic-settings
+email-validator
+
+# AI Models
+transformers
+sentence-transformers
+torch
+docling
+sentencepiece
+
+# Utilities
+python-dotenv==1.0.1
+langdetect==1.0.9
+aiofiles==23.2.1
+
+# Development
+pytest
+pytest-asyncio
+httpx==0.26.0
+
+
+#deepsearch-glm
+deepsearch-glm==0.22.0
+docling-parse
+
+bcrypt==4.0.1
+
+tf-keras
+huggingface_hub[hf_xet]

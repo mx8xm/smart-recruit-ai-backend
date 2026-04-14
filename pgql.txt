@@ -1,0 +1,26 @@
+cd "C:\Program Files\PostgreSQL\18\bin"
+psql -U postgres
+
+postgres=# CREATE DATABASE smart_recruit_db;
+CREATE DATABASE
+postgres=#
+
+-- إنشاء المستخدم (لاحظ علامات التنصيص)
+CREATE USER "user" WITH PASSWORD 'password123';
+
+-- منح الصلاحيات
+GRANT ALL PRIVILEGES ON DATABASE smart_recruit_db TO "user";
+
+-- جعل المستخدم مالكاً للقاعدة
+ALTER DATABASE smart_recruit_db OWNER TO "user";
+
+
+
+postgres=# CREATE USER "user" WITH PASSWORD 'password123';
+CREATE ROLE
+postgres=#
+postgres=# GRANT ALL PRIVILEGES ON DATABASE smart_recruit_db TO "user";
+GRANT
+postgres=#
+postgres=# ALTER DATABASE smart_recruit_db OWNER TO "user";
+ALTER DATABASE

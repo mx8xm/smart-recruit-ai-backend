@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg
+*.egg-info/
+build/
+dist/
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# Environment files
+.env
+.env.local
+.env.deploy
+
+# IDE / editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Uploads and cache
+uploads/
+.cache/
+huggingface/
+models/
+
+# Logs and reports
+*.log
+logs/
+htmlcov/
+.coverage
+.pytest_cache/
+perplexity.md
+
+# OS
+.DS_Store
+Thumbs.db
