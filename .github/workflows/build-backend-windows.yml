@@ -73,7 +73,11 @@ jobs:
         run: |
           $env:PYI_BUILD_MODE = "onedir"
           python -m PyInstaller --noconfirm --clean packaging\backend.spec --distpath output\dist --workpath output\build
-          Compress-Archive -Path "output\dist\smart-recruit-backend\*" -DestinationPath "output\artifacts\smart-recruit-backend-onedir.zip" -Force
+          if (Test-Path "output\dist\smart-recruit-backend") {
+            Compress-Archive -Path "output\dist\smart-recruit-backend\*" -DestinationPath "output\artifacts\smart-recruit-backend-onedir.zip" -Force
+          } else {
+            Write-Error "onedir output folder not found after PyInstaller build"
+          }
 
       - name: Build onefile
         if: ${{ inputs.build_onefile }}
@@ -81,8 +85,12 @@ jobs:
         run: |
           $env:PYI_BUILD_MODE = "onefile"
           python -m PyInstaller --noconfirm --clean packaging\backend.spec --distpath output\dist --workpath output\build
-          Copy-Item "output\dist\smart-recruit-backend.exe" "output\artifacts\smart-recruit-backend-onefile.exe" -Force
-          Compress-Archive -Path "output\dist\smart-recruit-backend.exe" -DestinationPath "output\artifacts\smart-recruit-backend-onefile.zip" -Force
+          if (Test-Path "output\dist\smart-recruit-backend.exe") {
+            Copy-Item "output\dist\smart-recruit-backend.exe" "output\artifacts\smart-recruit-backend-onefile.exe" -Force
+            Compress-Archive -Path "output\dist\smart-recruit-backend.exe" -DestinationPath "output\artifacts\smart-recruit-backend-onefile.zip" -Force
+          } else {
+            Write-Error "onefile output executable not found after PyInstaller build"
+          }
 
       - name: Print artifact sizes
         shell: powershell

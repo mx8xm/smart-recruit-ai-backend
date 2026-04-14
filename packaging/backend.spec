@@ -7,7 +7,8 @@ from pathlib import Path
 from PyInstaller.utils.hooks import collect_data_files, collect_submodules
 
 
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
+SPEC_FILE = Path(SPEC).resolve()
+PROJECT_ROOT = SPEC_FILE.parent.parent
 BUILD_MODE = os.environ.get("PYI_BUILD_MODE", "onedir").lower()
 IS_ONEFILE = BUILD_MODE == "onefile"
 
