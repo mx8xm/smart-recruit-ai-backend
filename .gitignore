@@ -16,9 +16,9 @@ ENV/
 .venv/
 
 # Environment files
-.env
-.env.local
-.env.deploy
+# .env
+# .env.local
+# .env.deploy
 
 # IDE / editor
 .vscode/
