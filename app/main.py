@@ -1,29 +1,26 @@
 import logging
 import os
 from contextlib import asynccontextmanager
+from time import perf_counter
 from pathlib import Path
+
+os.environ.setdefault("TF_CPP_MIN_LOG_LEVEL", "3")
+os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
+os.environ.setdefault("HF_HUB_DISABLE_TELEMETRY", "1")
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1 import api_router
 from app.core.config import PROJECT_ROOT, get_settings
+from app.core.logging_setup import configure_logging
 from app.database import Base, engine
 import app.models  # noqa: F401
 
 
 settings = get_settings()
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-)
+configure_logging(debug=settings.DEBUG)
 logger = logging.getLogger(__name__)
-logging.getLogger("sqlalchemy.engine").setLevel(logging.WARNING)
-logging.getLogger("docling").setLevel(logging.WARNING)
-logging.getLogger("rapidocr").setLevel(logging.WARNING)
-logging.getLogger("huggingface_hub").setLevel(logging.ERROR)
-logging.getLogger("transformers").setLevel(logging.ERROR)
 
 
 def _ensure_runtime_directories() -> None:
@@ -72,6 +69,21 @@ app.add_middleware(
 )
 
 app.include_router(api_router, prefix="/api/v1")
+
+
+@app.middleware("http")
+async def log_requests(request, call_next):
+    started_at = perf_counter()
+    response = await call_next(request)
+    elapsed_ms = (perf_counter() - started_at) * 1000
+    logger.info(
+        "%s %s -> %s (%.1f ms)",
+        request.method,
+        request.url.path,
+        response.status_code,
+        elapsed_ms,
+    )
+    return response
 
 
 @app.get("/", tags=["Root"])

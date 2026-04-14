@@ -1,0 +1,110 @@
+name: Build Backend Windows
+
+"on":
+  workflow_dispatch:
+    inputs:
+      build_onefile:
+        description: "Build the extra onefile package"
+        required: false
+        default: true
+        type: boolean
+      predownload_models:
+        description: "Pre-download models during CI build"
+        required: false
+        default: false
+        type: boolean
+      retention_days:
+        description: "Artifact retention days"
+        required: false
+        default: "5"
+        type: string
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    timeout-minutes: 180
+    env:
+      PIP_DISABLE_PIP_VERSION_CHECK: "1"
+      PYTHONUNBUFFERED: "1"
+      ENV_FILE: .env.local.example
+      TF_CPP_MIN_LOG_LEVEL: "2"
+      TOKENIZERS_PARALLELISM: "false"
+      HF_HUB_DISABLE_TELEMETRY: "1"
+      SMART_RECRUIT_PACKAGED: "1"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: "pip"
+
+      - name: Prepare directories
+        shell: powershell
+        run: |
+          New-Item -ItemType Directory -Force -Path output, output\dist, output\build, output\artifacts, logs | Out-Null
+
+      - name: Install dependencies
+        shell: powershell
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          pip install -r requirements.txt
+
+      - name: Verify baseline commands
+        shell: powershell
+        run: |
+          python -m compileall app scripts run.py download_models.py
+          python -m PyInstaller --version
+
+      - name: Optional model predownload
+        if: ${{ inputs.predownload_models }}
+        shell: powershell
+        run: |
+          python download_models.py
+
+      - name: Build onedir
+        shell: powershell
+        run: |
+          $env:PYI_BUILD_MODE = "onedir"
+          python -m PyInstaller --noconfirm --clean packaging\backend.spec --distpath output\dist --workpath output\build
+          Compress-Archive -Path "output\dist\smart-recruit-backend\*" -DestinationPath "output\artifacts\smart-recruit-backend-onedir.zip" -Force
+
+      - name: Build onefile
+        if: ${{ inputs.build_onefile }}
+        shell: powershell
+        run: |
+          $env:PYI_BUILD_MODE = "onefile"
+          python -m PyInstaller --noconfirm --clean packaging\backend.spec --distpath output\dist --workpath output\build
+          Copy-Item "output\dist\smart-recruit-backend.exe" "output\artifacts\smart-recruit-backend-onefile.exe" -Force
+          Compress-Archive -Path "output\dist\smart-recruit-backend.exe" -DestinationPath "output\artifacts\smart-recruit-backend-onefile.zip" -Force
+
+      - name: Print artifact sizes
+        shell: powershell
+        run: |
+          Get-ChildItem output\artifacts | Select-Object Name, @{Name="SizeMB";Expression={[math]::Round($_.Length / 1MB, 2)}}
+
+      - name: Upload onedir zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: smart-recruit-backend-onedir
+          path: output/artifacts/smart-recruit-backend-onedir.zip
+          retention-days: ${{ fromJSON(inputs.retention_days) }}
+
+      - name: Upload onefile zip
+        if: ${{ inputs.build_onefile }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: smart-recruit-backend-onefile-zip
+          path: output/artifacts/smart-recruit-backend-onefile.zip
+          retention-days: ${{ fromJSON(inputs.retention_days) }}
+
+      - name: Upload onefile exe
+        if: ${{ inputs.build_onefile }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: smart-recruit-backend-onefile-exe
+          path: output/artifacts/smart-recruit-backend-onefile.exe
+          retention-days: ${{ fromJSON(inputs.retention_days) }}

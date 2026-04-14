@@ -28,7 +28,6 @@ class ApplicationResponse(BaseModel):
 class ApplicationDetail(ApplicationResponse):
     """Application with Full Text"""
     extracted_text: Optional[str] = None
-    cv_file_path: str
     
     model_config = ConfigDict(from_attributes=True)
 

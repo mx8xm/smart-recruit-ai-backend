@@ -43,7 +43,7 @@ async def save_upload_file(upload_file: UploadFile, job_id: int) -> tuple[str, s
         )
     
     # Create job-specific directory
-    job_folder = Path(settings.UPLOAD_FOLDER) / "cvs" / str(job_id)
+    job_folder = settings.upload_folder_path / "cvs" / str(job_id)
     job_folder.mkdir(parents=True, exist_ok=True)
     
     # Generate unique filename
@@ -67,6 +67,10 @@ async def save_upload_file(upload_file: UploadFile, job_id: int) -> tuple[str, s
         logger.info(f"✅ File saved: {file_path}")
         return str(file_path), upload_file.filename
         
+    except HTTPException:
+        if file_path.exists():
+            file_path.unlink()
+        raise
     except Exception as e:
         logger.error(f"❌ Failed to save file: {e}")
         # Clean up partial file if exists

@@ -37,6 +37,8 @@ uploads/
 .cache/
 huggingface/
 models/
+artifacts/
+data/
 
 # Logs and reports
 *.log
@@ -45,7 +47,23 @@ htmlcov/
 .coverage
 .pytest_cache/
 perplexity.md
+*.tmp
+*.temp
+*.bak
+*.old
+*.orig
+*.dump
+*.sql
+*.psql
+pip-wheel-metadata/
+output/
+server.pid
+server_stdout.log
+server_stderr.log
+cleanup_local.log
+temp_invalid.txt
 
 # OS
 .DS_Store
 Thumbs.db
+myidea.txt

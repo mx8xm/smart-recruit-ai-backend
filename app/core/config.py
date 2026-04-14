@@ -29,6 +29,7 @@ class Settings(BaseSettings):
     APP_NAME: str = "Smart Recruit AI"
     VERSION: str = "1.0.0"
     DEBUG: bool = False
+    LOG_LEVEL: str = "INFO"
 
     DATABASE_URL: str
 
@@ -44,9 +45,12 @@ class Settings(BaseSettings):
     GLINER_MODEL: str = "urchade/gliner_multi-v2.1"
     SCORING_MODEL: str = "paraphrase-multilingual-MiniLM-L12-v2"
     ACCEPTANCE_THRESHOLD: float = 0.45
+    MODEL_CACHE_DIR: str = "./.cache"
 
     ALLOWED_ORIGINS: str = "http://localhost:3000,http://localhost:5173"
     AUTO_CREATE_TABLES: bool = True
+    LOG_FOLDER: str = "./logs"
+    ENABLE_PRETTY_LOGS: bool = True
 
     model_config = SettingsConfigDict(
         extra="ignore",
@@ -73,6 +77,20 @@ class Settings(BaseSettings):
     @property
     def upload_folder_path(self) -> Path:
         path = Path(self.UPLOAD_FOLDER)
+        if not path.is_absolute():
+            path = PROJECT_ROOT / path
+        return path
+
+    @property
+    def model_cache_path(self) -> Path:
+        path = Path(self.MODEL_CACHE_DIR)
+        if not path.is_absolute():
+            path = PROJECT_ROOT / path
+        return path
+
+    @property
+    def log_folder_path(self) -> Path:
+        path = Path(self.LOG_FOLDER)
         if not path.is_absolute():
             path = PROJECT_ROOT / path
         return path
