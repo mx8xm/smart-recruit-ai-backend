@@ -18,6 +18,9 @@ name: Build Backend Windows
         required: false
         default: "5"
         type: string
+  push:
+    branches:
+      - main
 
 jobs:
   build-windows:
