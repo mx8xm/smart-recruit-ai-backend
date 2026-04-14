@@ -1,217 +1,127 @@
+# Smart Recruit AI Backend
 
-# 📂 **ملفات التوثيق والإعداد**
+FastAPI backend for job management, CV uploads, AI-based CV processing, and candidate scoring.
 
-## **ملف 1: `README.md`**
+## Features
 
-# 🚀 Smart Recruit AI - Backend
+- JWT authentication
+- Job CRUD APIs
+- Bulk CV upload
+- Background CV processing
+- PostgreSQL with SQLAlchemy async
+- Local development with `.env.local`
+- Choreo deploy with environment variables
 
-AI-Powered CV Filtering System for HR Recruitment using FastAPI
+## Tech Stack
 
-## 📋 Features
+- FastAPI
+- SQLAlchemy Async
+- PostgreSQL
+- asyncpg
+- Docling
+- GLiNER
+- Sentence Transformers
 
-- ✅ **JWT Authentication** - Secure user registration and login
-- 📝 **Job Management** - Create and manage job postings
-- 📄 **Bulk CV Upload** - Upload up to 1000 CVs simultaneously
-- 🤖 **AI Processing**:
-  - Text extraction from PDF/DOCX files (Docling)
-  - Candidate name extraction (mDeBERTa)
-  - Semantic CV matching (Sentence Transformers)
-- ⚡ **Background Processing** - Non-blocking CV analysis
-- 🎯 **Smart Ranking** - Automatic candidate scoring
-- 🗄️ **PostgreSQL Database** - Production-ready async database
+## Local Setup
 
-## 🛠️ Tech Stack
+### 1. Create and activate a virtual environment
 
-- **Framework**: FastAPI 0.109+
-- **Database**: PostgreSQL + SQLAlchemy (Async)
-- **Authentication**: JWT (python-jose)
-- **AI Models**:
-  - `timpal0l/mdeberta-v3-base-squad2` (Name Extraction)
-  - `paraphrase-multilingual-MiniLM-L12-v2` (Semantic Matching)
-  - `Docling` (PDF/DOCX Text Extraction)
-
-## 📦 Installation
-
-### 1. Clone Repository
-
-```bash
-git clone <repository-url>
-cd smart-recruit-ai-backend
-```
-
-### 2. Create Virtual Environment
-
-```bash
+```powershell
 python -m venv venv
-venv\Scripts\activate  # Windows
-python -m app.ai.model_loader
-
-# source venv/bin/activate  # Linux/Mac
-```
-```bash
-
-(venv) C:\Users\Max\Desktop\EST S4\pfe\smart-recruit-ai-backend-main - Copy>python -m app.ai.model_loader
-2026-03-06 10:06:35.287648: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set 
-the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
-2026-03-06 10:06:38.246736: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set 
-the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
-WARNING:tensorflow:From C:\Users\Max\AppData\Local\Programs\Python\Python310\lib\site-packages\tf_keras\src\losses.py:2976: The name tf.losses.sparse_softmax_cross_entropy is deprecated. Please use tf.compat.v1.losses.sparse_softmax_cross_entropy instead.
-
-C:\Users\Max\AppData\Local\Programs\Python\Python310\lib\runpy.py:126: RuntimeWarning: 'app.ai.model_loader' found in sys.modules after import of package 'app.ai', but prior to execution of 'app.ai.model_loader'; this may result in unpredictable behaviour
-  warn(RuntimeWarning(msg))
-C:\Users\Max\AppData\Local\Programs\Python\Python310\lib\site-packages\huggingface_hub\file_download.py:949: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
-  warnings.warn(
-model.safetensors: 100%|███████████████████████████████████████████████████████████| 1.16G/1.16G [09:29<00:00, 2.03MB/s]
-pytorch_model.bin: 100%|███████████████████████████████████████████████████████████| 1.16G/1.16G [09:35<00:00, 2.01MB/s]
-Fetching 5 files: 100%|██████████████████████████████████████████████████████████████████| 5/5 [09:36<00:00, 115.33s/it]
-tokenizer_config.json: 100%|█████████████████████████████████████████████████████████████████| 52.0/52.0 [00:00<?, ?B/s]
-config.json: 100%|██████████████████████████████████████████████████████████████████████| 579/579 [00:00<00:00, 495kB/s]
-spm.model: 100%|███████████████████████████████████████████████████████████████████| 4.31M/4.31M [00:01<00:00, 2.28MB/s]
-C:\Users\Max\AppData\Local\Programs\Python\Python310\lib\site-packages\transformers\convert_slow_tokenizer.py:566: UserWarning: The sentencepiece tokenizer that you are converting to a fast tokenizer uses the byte fallback option which is not implemented in the fast tokenizers. In practice this means that the fast version of the tokenizer can produce unknown tokens whereas the sentencepiece version would have converted these unknown tokens into a sequence of byte tokens matching 
-the original piece of text.
-  warnings.warn(
-
-(venv) C:\Users\Max\Desktop\EST S4\pfe\smart-recruit-ai-backend-main - Copy>python run.py
+venv\Scripts\activate
 ```
 
-### 3. Install Dependencies
+### 2. Install dependencies
 
-```bash
+```powershell
 pip install -r requirements.txt
 ```
 
-### 4. Setup Database
+### 3. Prepare environment file
 
-Install PostgreSQL and create database:
-
-```sql
-CREATE DATABASE smart_recruit_db;
+```powershell
+copy .env.local.example .env.local
 ```
 
-### 5. Configure Environment
+Update `.env.local` with your local PostgreSQL credentials if needed.
 
-Copy `.env.example` to `.env` and update:
+### 4. Download AI models once
 
-```bash
-copy .env.example .env  # Windows
-# cp .env.example .env  # Linux/Mac
+```powershell
+python download_models.py
 ```
 
-Edit `.env` file:
+This warms the Hugging Face cache. It is not part of normal API startup.
+
+### 5. Run the API
+
+```powershell
+python run.py
+```
+
+Local API URLs:
+
+- `http://localhost:8000/health`
+- `http://localhost:8000/docs`
+
+## Environment Files
+
+- `.env.local.example`: local development example
+- `.env.deploy.example`: deploy example for Choreo
+- `.env.local`: local file used by the app automatically if present
+
+If `ENV_FILE` is set, the app uses that file instead.
+
+## Model Loading
+
+- `Docling` extracts the full CV text
+- `PyMuPDF` is only used as a helper for fast raw text extraction
+- `GLiNER` extracts names and other entities
+- `Sentence Transformers` calculates the match score
+
+## Choreo Deploy
+
+### Procfile
+
+```txt
+web: python run.py
+```
+
+### Required Environment Variables
 
 ```env
-DATABASE_URL=postgresql+asyncpg://postgres:YOUR_PASSWORD@localhost:5432/smart_recruit_db
-SECRET_KEY=your-super-secret-key-min-32-characters
+APP_NAME=Smart Recruit AI
+VERSION=1.0.0
+DEBUG=False
+DATABASE_URL=postgresql+asyncpg://postgres:YOUR_PASSWORD@db.ezhwwebjkhjsxbykvwsf.supabase.co:5432/postgres
+SECRET_KEY=CHANGE_ME_STRONG_SECRET
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=1440
+UPLOAD_FOLDER=./uploads
+MAX_FILE_SIZE=10485760
+MAX_FILES_PER_UPLOAD=1000
+GLINER_MODEL=urchade/gliner_multi-v2.1
+SCORING_MODEL=paraphrase-multilingual-MiniLM-L12-v2
+ACCEPTANCE_THRESHOLD=0.45
+ALLOWED_ORIGINS=https://YOUR-FRONTEND-DOMAIN
+HF_HOME=/app/.cache
+TRANSFORMERS_CACHE=/app/.cache
+SENTENCE_TRANSFORMERS_HOME=/app/.cache
+TORCH_HOME=/app/.cache
+AUTO_CREATE_TABLES=True
 ```
 
-### 6. Run Migrations
+### Deploy Steps
 
-```bash
-alembic upgrade head
-```
+1. Push this repository to GitHub.
+2. Create a `Service` in Choreo from the repo.
+3. Keep the `Procfile` in the project root.
+4. Add the environment variables in Choreo Configs and Secrets.
+5. Deploy and test `/health`.
 
-### 7. Start Server
+## Notes
 
-```bash
-python run.py
-```
-
-Server will start at: **http://localhost:8000**
-
-## 📖 API Documentation
-
-Once running, visit:
-
-- **Swagger UI**: http://localhost:8000/docs
-- **ReDoc**: http://localhost:8000/redoc
-
-## 🔑 API Endpoints
-
-### Authentication
-- `POST /api/v1/auth/register` - Register new HR user
-- `POST /api/v1/auth/login` - Login and get JWT token
-- `GET /api/v1/auth/me` - Get current user info
-
-### Jobs
-- `POST /api/v1/jobs/` - Create job posting
-- `GET /api/v1/jobs/` - List all my jobs
-- `GET /api/v1/jobs/{job_id}` - Get job details with applications
-- `PUT /api/v1/jobs/{job_id}` - Update job
-- `DELETE /api/v1/jobs/{job_id}` - Delete job
-
-### Applications
-- `POST /api/v1/applications/{job_id}/upload` - Upload CVs (bulk)
-- `GET /api/v1/applications/{job_id}/applications` - List all applications
-- `GET /api/v1/applications/application/{id}` - Get application details
-
-## 🧪 Testing
-
-```bash
-pytest tests/
-```
-
-## 📁 Project Structure
-
-```
-smart-recruit-ai-backend/
-├── app/
-│   ├── ai/              # AI processing modules
-│   ├── api/             # API endpoints
-│   ├── core/            # Config & security
-│   ├── models/          # Database models
-│   ├── schemas/         # Pydantic schemas
-│   ├── services/        # Business logic
-│   └── utils/           # Helper functions
-├── alembic/             # Database migrations
-├── uploads/             # Uploaded CV files
-└── tests/               # Unit tests
-```
-
-## 🤝 Contributing
-
-Contributions welcome! Please open an issue or PR.
-
-## 📄 License
-
-MIT License
-
-***
-
-## 🚀 **خطوات التشغيل النهائية:**
-
-### **1. تثبيت PostgreSQL**
-```bash
-# قم بتثبيت PostgreSQL من:
-# https://www.postgresql.org/download/windows/
-```
-
-### **2. إنشاء قاعدة البيانات**
-```sql
--- افتح pgAdmin أو psql
-CREATE DATABASE smart_recruit_db;
-```
-
-### **3. تفعيل البيئة الافتراضية**
-```cmd
-cd smart-recruit-ai-backend
-venv\Scripts\activate
-```
-
-### **4. تشغيل السيرفر**
-```cmd
-python run.py
-```
-
-### **5. افتح المتصفح**
-```
-http://localhost:8000/docs
-```
-
-for me how creat requirements.txt stable : pip freeze > requirements.txt
-
-***
-
-cd "C:\Users\Max\Desktop\EST S4\pfe\mx8xm\smart-recruit-ai-backend"
-venv\Scripts\activate
-python download_models.py
-python run.py
+- Do not put secrets in tracked files.
+- Do not put `download_models.py` in `Procfile`.
+- Choreo should provide `PORT`; locally the app defaults to `8000`.
+- Old failed CV processing records stay failed until you re-upload or reprocess them.
