@@ -102,7 +102,7 @@ jobs:
         with:
           name: smart-recruit-backend-onedir
           path: output/artifacts/smart-recruit-backend-onedir.zip
-          retention-days: ${{ fromJSON(inputs.retention_days) }}
+          retention-days: 5
 
       - name: Upload onefile zip
         if: ${{ inputs.build_onefile }}
@@ -110,7 +110,7 @@ jobs:
         with:
           name: smart-recruit-backend-onefile-zip
           path: output/artifacts/smart-recruit-backend-onefile.zip
-          retention-days: ${{ fromJSON(inputs.retention_days) }}
+          retention-days: 5
 
       - name: Upload onefile exe
         if: ${{ inputs.build_onefile }}
@@ -118,4 +118,4 @@ jobs:
         with:
           name: smart-recruit-backend-onefile-exe
           path: output/artifacts/smart-recruit-backend-onefile.exe
-          retention-days: ${{ fromJSON(inputs.retention_days) }}
+          retention-days: 5
